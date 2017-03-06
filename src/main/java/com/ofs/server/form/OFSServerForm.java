@@ -11,7 +11,7 @@ import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.PathNotFoundException;
 import com.jayway.jsonpath.spi.json.JacksonJsonNodeJsonProvider;
 import com.ofs.server.errors.BadRequestException;
-import com.ofs.server.form.error.ErrorDigestor;
+import com.ofs.server.form.error.ErrorDigester;
 import com.ofs.server.form.error.RequestContext;
 import com.ofs.server.form.schema.JsonSchema;
 import com.ofs.server.model.OFSEntity;
@@ -84,7 +84,7 @@ public class OFSServerForm<T extends OFSEntity> {
             String keyword = error.path("keyword").asText();
             if(Strings.isEmpty(keyword))
                 throw new RuntimeException("Possible schema syntax issue found", msg.asException());
-            ErrorDigestor digestor = context.getFactory().create(keyword);
+            ErrorDigester digestor = context.getFactory().create(keyword);
             if(digestor != null) {
                 digestor.digest(errors, entityName, error);
             } else {
