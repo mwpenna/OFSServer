@@ -14,8 +14,11 @@ import com.ofs.server.errors.BadRequestException;
 import com.ofs.server.form.error.ErrorDigester;
 import com.ofs.server.form.error.RequestContext;
 import com.ofs.server.form.schema.JsonSchema;
+import com.ofs.server.form.update.ChangeSet;
+import com.ofs.server.form.update.ObjectUpdater;
 import com.ofs.server.model.OFSEntity;
 import com.ofs.server.model.OFSErrors;
+import org.springframework.http.HttpHeaders;
 import org.xpertss.json.util.Strings;
 
 import java.io.IOException;
@@ -66,6 +69,26 @@ public class OFSServerForm<T extends OFSEntity> {
         ObjectReader reader = mapper.readerForUpdating(entity);
         return type.cast(reader.readValue(requestBody));
     }
+
+    public ChangeSet update(T entity)
+            throws BadRequestException, IOException
+    {
+        // Check CAS headers
+        HttpHeaders headers = context.getRequestBody().getHeaders();
+
+        // Schema Validation if it exists
+        JsonSchema schema = context.getSchema();
+        if(schema != null) {
+            ProcessingReport report = schema.validateUnchecked(requestBody, true);
+            if(!report.isSuccess()) {
+                throw new BadRequestException(createErrors(report, context.getEntityName()));
+            }
+        }
+
+        ObjectUpdater<T> updater = ObjectUpdater.createFor(context, type);
+        return updater.update(entity, requestBody);
+    }
+
 
     public <V> V findProperty(String jsonPath)
     {
