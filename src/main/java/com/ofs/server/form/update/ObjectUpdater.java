@@ -104,7 +104,7 @@ public class ObjectUpdater <T extends OFSEntity> {
 
     private List<BeanPropertyDefinition> filter(BeanDescription desc)
     {
-        List<BeanPropertyDefinition> results = new ArrayList<>();
+        List<BeanPropertyDefinition> results = desc.findProperties();
 
         Annotations annotations = desc.getClassAnnotations();
         JsonIgnoreProperties ignore = annotations.get(JsonIgnoreProperties.class);
