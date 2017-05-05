@@ -2,11 +2,14 @@ package com.ofs.server.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ofs.server.OFSServerId;
+import com.ofs.server.client.AuthenticationClient;
 import com.ofs.server.form.OFSServerFormResolver;
+import com.ofs.server.security.AuthInterceptor;
 import com.ofs.server.security.SubjectResolver;
 import com.ofs.server.utils.Links;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.HttpHeaders;
@@ -20,6 +23,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.HandlerMethodReturnValueHandler;
 import org.springframework.web.method.support.ModelAndViewContainer;
 import org.springframework.web.servlet.config.annotation.EnableWebMvc;
+import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 import javax.servlet.http.HttpServletRequest;
@@ -47,6 +51,9 @@ public class OFSServerConfig extends WebMvcConfigurerAdapter {
     @Qualifier("ofsObjectMapper")
     private ObjectMapper ofsObjectMapper;
 
+    @Autowired
+    private ApplicationContext context;
+
     @Override
     public void addArgumentResolvers(List<HandlerMethodArgumentResolver> argumentResolvers)
     {
@@ -66,6 +73,10 @@ public class OFSServerConfig extends WebMvcConfigurerAdapter {
         converters.add(new OFSMessageConverter(ofsObjectMapper));
     }
 
+    @Override
+    public void addInterceptors(InterceptorRegistry registry) {
+        registry.addInterceptor((AuthInterceptor) context.getBean("authInterceptor"));
+    }
 
     private class OFSMessageConverter extends MappingJackson2HttpMessageConverter {
 
