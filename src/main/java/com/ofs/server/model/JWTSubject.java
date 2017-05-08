@@ -8,6 +8,7 @@ import java.net.URI;
 public class JWTSubject {
 
     public enum Role {
+        SYSTEM_ADMIN,
         ADMIN,
         ACCOUNT_MANAGER,
         WAREHOUSE,
