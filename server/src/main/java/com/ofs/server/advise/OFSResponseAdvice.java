@@ -15,11 +15,14 @@ import com.ofs.server.OFSController;
 import com.ofs.server.OFSServerId;
 import com.ofs.server.errors.NotFoundException;
 import com.ofs.server.model.OFSEntity;
+import com.ofs.server.page.Page;
+import com.ofs.server.page.Paged;
 import com.ofs.server.security.SecurityContext;
 import com.ofs.server.security.Subject;
 import com.ofs.server.utils.Links;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.core.MethodParameter;
 import org.springframework.http.CacheControl;
@@ -35,6 +38,8 @@ import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.mvc.method.annotation.ResponseBodyAdvice;
 import xpertss.lang.Objects;
 import xpertss.lang.Strings;
+import xpertss.net.QueryBuilder;
+import xpertss.net.UrlBuilder;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -52,6 +57,9 @@ import static java.lang.String.format;
 
 @ControllerAdvice(annotations = OFSController.class)
 public class OFSResponseAdvice implements ResponseBodyAdvice<Object>{
+
+    @Value("${MAX_LIMIT_OVERRIDE:500}")
+    private int maxLimit = 500;
 
     @Autowired
     private ApplicationContext context;
@@ -89,7 +97,7 @@ public class OFSResponseAdvice implements ResponseBodyAdvice<Object>{
                                   ServerHttpRequest input, ServerHttpResponse output)
     {
         OFSController annotation = returnType.getDeclaringClass().getAnnotation(OFSController.class);
-        RequestContext context = RequestContext.of(input, output);
+        RequestContext context = RequestContext.of(input, output, maxLimit);
 
         Type genType = returnType.getGenericParameterType();
         if(isEntity(genType)) {
@@ -137,10 +145,15 @@ public class OFSResponseAdvice implements ResponseBodyAdvice<Object>{
     {
         HttpServletRequest request = context.getRequest();
         ObjectNode result = ofsObjectMapper.createObjectNode();
-        if(Objects.isOneOf(request.getMethod(), "GET", "HEAD")) {
+        Page page = context.getPage();
+
+        if(isPageable(request)) {
             URI requestUri = generateRequestUri(request);
             result.put("href", requestUri.toString());
+            applyPaging(page, requestUri, result);
         }
+
+
         ArrayNode array = result.put("count", items.size())
                 .putArray("items");
 
@@ -154,13 +167,48 @@ public class OFSResponseAdvice implements ResponseBodyAdvice<Object>{
 
         result.put("count", array.size());
 
+        if(items instanceof Paged) {
+            Paged paged = (Paged) items;
+            if(!paged.hasNext()) {
+                result.remove("next");
+            }
+        } else if (isPageable(request)) {
+            for (int i = 0; i < page.getStart(); i++) {
+                array.remove(0);
+            }
+            if (array.size() > page.getLimit()) {
+                do {
+                    array.remove(array.size() - 1);
+                } while (array.size() > page.getLimit());
+            } else {
+                result.remove("next");
+            }
+        }
+
         return result;
     }
 
+    private boolean isPageable(HttpServletRequest request)
+    {
+        return Objects.isOneOf(request.getMethod(), "GET", "HEAD");
+    }
 
-
-
-
+    private void applyPaging(Page page, URI requestUri, ObjectNode object)
+    {
+        UrlBuilder urlBuilder = UrlBuilder.create(requestUri);
+        QueryBuilder queryBuilder = QueryBuilder.create();
+        queryBuilder.add("limit", Integer.toString(page.getLimit()));
+        if(page.getStart() > 0) {
+            object.put("first", urlBuilder.setQuery(queryBuilder.build()).build());
+            int previous = page.getStart() - page.getLimit();
+            if(previous < 0) previous = 0;
+            queryBuilder.set("start", Integer.toString(previous));
+            object.put("previous", urlBuilder.setQuery(queryBuilder.build()).build());
+        }
+        queryBuilder.set("start", Integer.toString(page.getStart() + page.getLimit()));
+        object.put("next", urlBuilder.setQuery(queryBuilder.build()).build());
+        object.put("limit", page.getLimit());
+    }
 
     private JsonNode processObject(RequestContext context, Object body, ObjectNode object)
     {
@@ -253,6 +301,7 @@ public class OFSResponseAdvice implements ResponseBodyAdvice<Object>{
 
         private HttpServletRequest request;
         private HttpHeaders responseHeaders;
+        private Page page;
 
         public HttpServletRequest getRequest()
         {
@@ -264,11 +313,17 @@ public class OFSResponseAdvice implements ResponseBodyAdvice<Object>{
             return responseHeaders;
         }
 
-        public static RequestContext of(ServerHttpRequest input, ServerHttpResponse output)
+        public Page getPage()
+        {
+            return page;
+        }
+
+        public static RequestContext of(ServerHttpRequest input, ServerHttpResponse output,  int maxLimit)
         {
             RequestContext context = new RequestContext();
             context.request = ((ServletServerHttpRequest) input).getServletRequest();
             context.responseHeaders = output.getHeaders();
+            context.page = Page.from(context.request, maxLimit);
             return context;
         }
     }
