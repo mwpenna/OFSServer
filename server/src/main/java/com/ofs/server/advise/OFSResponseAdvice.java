@@ -236,10 +236,6 @@ public class OFSResponseAdvice implements ResponseBodyAdvice<Object>{
         return object;
     }
 
-
-
-
-    @SuppressWarnings("unchecked")
     private <T extends JsonNode> T encodeEntity(RequestContext context, OFSEntity entity)
             throws IllegalArgumentException
     {
@@ -282,13 +278,10 @@ public class OFSResponseAdvice implements ResponseBodyAdvice<Object>{
         }
     }
 
-
-
     private boolean isEntity(Type genType)
     {
         return (genType instanceof Class && !((Class)genType).isArray());
     }
-
 
     private URI generateRequestUri(HttpServletRequest request)
     {
