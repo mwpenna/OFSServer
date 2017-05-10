@@ -1,0 +1,43 @@
+{
+   "$schema": "http://json-schema.org/draft-04/schema#",
+   "title": "Ticket",
+   "description": "JSON Ticket Create",
+   "type": "object",
+   "properties": {
+      "contact": {
+         "type": "object",
+         "properties": {
+            "name": { "type": "string"},
+            "email": { "type": "string"},
+            "phoneNumber": { "type": "string"},
+            "gender": { "type": "string"}
+         },
+         "additionalProperties": false
+      },
+      "address": {
+         "type": "object",
+         "properties": {
+            "street": { "type": "string"},
+            "city": { "type": "string"},
+            "state": { "type": "string"},
+            "zip": { "type": "string"}
+         },
+         "additionalProperties": false
+      },
+      "customerId": {
+         "type": "array",
+         "items": {
+            "type": "object",
+            "properties": {
+               "href": { "type": "string" }
+            },
+            "required": ["href"],
+            "additionalProperties": false
+         }
+      },
+      "currency-code": { "type": "string" },
+      "street_name": { "type": "string" },
+      "ticketAmount": { "type": "number" }
+   },
+   "additionalProperties": true
+}

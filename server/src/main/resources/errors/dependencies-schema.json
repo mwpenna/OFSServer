@@ -1,0 +1,35 @@
+{
+   "$schema": "http://json-schema.org/draft-04/schema#",
+   "title": "test",
+   "description": "Test Various Dependencies rules",
+   "type": "object",
+   "properties": {
+      "purchase": {
+         "type": "object",
+         "properties": {
+            "name": { "type": "string" },
+            "credit_card": { "type": "number" },
+            "billing_address": { "type": "string" },
+            "billing_zip": { "type": "string" }
+         },
+         "dependencies": {
+            "credit_card": ["billing_address", "billing_zip"],
+            "billing_address": ["billing_zip"]
+         }
+      },
+      "address": {
+         "type": "object",
+         "properties": {
+            "street": { "type": "string" },
+            "city": { "type": "string" },
+            "state": { "type": "string" },
+            "zip": { "type": "string" }
+         },
+         "dependencies": {
+            "city": {
+               "required": ["state", "zip"]
+            }
+         }
+      }
+   }
+}

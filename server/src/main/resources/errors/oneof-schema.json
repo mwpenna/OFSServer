@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "test",
+  "description": "Test oneOf - One",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "oneOf": [
+        { "minLength": 5 },
+        { "enum": ["Frank","Erin"] }
+      ]
+    },
+    "values": {
+      "type": "array",
+      "items": {
+        "type": "number",
+        "oneOf": [
+          { "multipleOf": 5 },
+          { "multipleOf": 3 }
+        ]
+      }
+    }
+  }
+}

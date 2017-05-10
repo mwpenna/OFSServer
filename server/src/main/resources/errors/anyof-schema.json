@@ -1,0 +1,25 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "test",
+  "description": "Test anyOf - One or more",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "anyOf": [
+        { "minLength": 5 },
+        { "enum": ["John","Ben"] },
+        { "enum": ["Frank","Erin"] }
+      ]
+    },
+    "values": {
+      "type": "array",
+      "items": {
+        "anyOf": [
+          { "type": "string" },
+          { "type": "number" }
+        ]
+      }
+    }
+  }
+}

@@ -1,0 +1,23 @@
+{
+   "$schema": "http://json-schema.org/draft-04/schema#",
+   "title": "test",
+   "description": "Test Various Properties rules",
+   "type": "object",
+   "properties": {
+      "parents": {
+         "type": "array",
+         "minItems": 1,
+         "maxItems": 2
+      },
+      "address": {
+         "type": "array",
+         "items": [
+            { "type": "number" },
+            { "type": "string" },
+            { "type": "string", "enum": ["Street", "Avenue", "Boulevard"] },
+            { "type": "string", "enum": ["NW", "NE", "SW", "SE"] }
+         ],
+         "additionalItems": false
+      }
+   }
+}

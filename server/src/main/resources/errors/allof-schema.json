@@ -1,0 +1,24 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "test",
+  "description": "Test allOf - All",
+  "type": "object",
+  "properties": {
+    "name": {
+      "type": "string",
+      "allOf": [
+        { "minLength": 5 },
+        { "enum": ["Frank","Erin"] }
+      ]
+    },
+    "values": {
+      "type": "array",
+      "items": {
+        "allOf": [
+          { "type": "string" },
+          { "type": "number" }
+        ]
+      }
+    }
+  }
+}

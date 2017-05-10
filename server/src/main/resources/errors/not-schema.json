@@ -1,0 +1,14 @@
+{
+   "$schema": "http://json-schema.org/draft-04/schema#",
+   "title": "test",
+   "description": "Test not keyword",
+   "type": "object",
+   "properties": {
+      "href": { "not": { } },
+      "updatedOn": { "not": { } },
+      "createdOn": { "not": { } },
+      "currency": { "type": "string", "not": { "enum": ["EUR", "RUB"] } },
+      "amount": { "type": "number", "minimum": 0, "exclusiveMinimum": true }
+   },
+   "additionalProperties": true
+}

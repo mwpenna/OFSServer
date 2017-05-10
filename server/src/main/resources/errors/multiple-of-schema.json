@@ -1,0 +1,8 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "test",
+  "type": "object",
+  "properties": {
+    "bag_count": { "type" : "number", "multipleOf" : 15 }
+  }
+}
