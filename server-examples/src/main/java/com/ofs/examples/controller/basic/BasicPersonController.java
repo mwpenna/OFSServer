@@ -13,7 +13,7 @@ import java.util.UUID;
 
 @RestController
 @RequestMapping(value="/person", produces = MediaType.APPLICATION_JSON_VALUE)
-public class PersonController {
+public class BasicPersonController {
 
     @GetMapping(value = "/healthcheck")
     public ResponseEntity healthCheck() {
