@@ -1,21 +1,17 @@
 package com.ofs.server.security;
 
-import com.ofs.server.client.AuthenticationClient;
 import com.ofs.server.errors.ForbiddenException;
+import com.ofs.server.client.AuthenticationClient;
 import com.ofs.server.model.JWTSubject;
 import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
-import org.springframework.web.filter.OncePerRequestFilter;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
 
-import javax.servlet.FilterChain;
-import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-import java.io.IOException;
 
 @Slf4j
 @Component
@@ -23,36 +19,20 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
     @Autowired
     AuthenticationClient authenticationClient;
 
-//    @Override
-//    protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
-//        String authString = validAuthHeader(httpServletRequest.getHeader("Authorization"));
-//        String token = getBeaerTokenFromAuthentication(authString);
-//        SecurityContext.bind(createSubject(authenticateUser(token), token));
-//
-//        try {
-//            filterChain.doFilter(httpServletRequest, httpServletResponse);
-//        } finally {
-//            SecurityContext.clear();
-//        }
-//    }
+    @Override
+    public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
+        if (handler instanceof HandlerMethod) {
+            HandlerMethod handlerMethod = (HandlerMethod) handler;
 
-
-        @Override
-        public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws
-                Exception {
-
-            if (handler instanceof HandlerMethod) {
-                HandlerMethod handlerMethod = (HandlerMethod) handler;
-
-                if(handlerMethod.getMethod().isAnnotationPresent(Authenticate.class)) {
-                    String authString = validAuthHeader(request.getHeader("Authorization"));
-                    String token = getBeaerTokenFromAuthentication(authString);
-                    SecurityContext.bind(createSubject(authenticateUser(authString), token));
-                }
-
+            if(handlerMethod.getMethod().isAnnotationPresent(Authenticate.class)) {
+                String authString = validAuthHeader(request.getHeader("Authorization"));
+                String token = getBeaerTokenFromAuthentication(authString);
+                SecurityContext.bind(createSubject(authenticateUser(authString), token));
             }
-            return true;
+
         }
+        return true;
+    }
 
     private JWTSubject authenticateUser(String authToken) {
         JWTSubject subject;

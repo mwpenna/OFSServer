@@ -7,8 +7,8 @@
 package com.ofs.server.form.error;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.ofs.server.model.OFSError;
 import com.ofs.server.model.OFSErrors;
+import com.ofs.server.model.OFSError;
 
 @Keyword("minItems")
 public class MinItemsErrorDigester extends AbstractErrorDigester {

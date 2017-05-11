@@ -1,8 +1,8 @@
 package com.ofs.server.form.error;
 
 import com.fasterxml.jackson.databind.JsonNode;
-import com.ofs.server.model.OFSError;
 import com.ofs.server.model.OFSErrors;
+import com.ofs.server.model.OFSError;
 import org.springframework.util.StringUtils;
 import xpertss.lang.CaseFormat;
 import xpertss.lang.Integers;

@@ -2,11 +2,10 @@ package com.ofs.server.config;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ofs.server.OFSServerId;
-import com.ofs.server.client.AuthenticationClient;
-import com.ofs.server.form.OFSServerFormResolver;
 import com.ofs.server.security.AuthInterceptor;
 import com.ofs.server.security.SubjectResolver;
 import com.ofs.server.utils.Links;
+import com.ofs.server.form.OFSServerFormResolver;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
