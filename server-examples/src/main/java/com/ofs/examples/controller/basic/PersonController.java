@@ -1,8 +1,6 @@
-package com.ofs.examples.controller;
+package com.ofs.examples.controller.basic;
 
 import com.ofs.examples.model.Person;
-import com.ofs.server.OFSServerId;
-import com.ofs.server.form.OFSServerForm;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -11,6 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.net.URI;
+import java.util.UUID;
 
 @RestController
 @RequestMapping(value="/person", produces = MediaType.APPLICATION_JSON_VALUE)
@@ -22,8 +21,11 @@ public class PersonController {
     }
 
     @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
-    public ResponseEntity create(@OFSServerId URI id, OFSServerForm<Person> form) throws Exception{
-        Person person = form.create(id);
-        return ResponseEntity.created(id).build();
+    public ResponseEntity create(Person person) throws Exception{
+        UUID id = UUID.randomUUID();
+        person.setId(id);
+        //Do buesiness stuff with person
+
+        return ResponseEntity.created(URI.create("http://localhost:8080/person/id/"+id)).build();
     }
 }
