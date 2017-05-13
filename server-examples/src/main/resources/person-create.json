@@ -1,0 +1,23 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "person",
+  "description": "JSON Person Create",
+  "type" : "object",
+  "properties": {
+    "id": {
+      "not": {}
+    },
+    "href": {
+      "not": {}
+    },
+    "createdOn": {
+      "not": {}
+    },
+    "name": {
+      "type": "string"
+    }
+  },
+  "required":["name"],
+  "additionalProperties": true
+}
+

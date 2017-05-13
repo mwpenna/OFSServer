@@ -1,5 +1,7 @@
 package com.ofs.examples.model;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.ofs.examples.utils.StringUtils;
 import com.ofs.server.model.BaseOFSEntity;
 import lombok.Data;
 
@@ -18,5 +20,10 @@ public class Person extends BaseOFSEntity {
 
     public Person (URI href) {
         super(href);
+    }
+
+    @JsonIgnore
+    public String getIdFromHref() {
+        return StringUtils.getIdFromURI(getHref());
     }
 }

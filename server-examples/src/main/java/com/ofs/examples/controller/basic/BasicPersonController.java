@@ -12,7 +12,7 @@ import java.net.URI;
 import java.util.UUID;
 
 @RestController
-@RequestMapping(value="/person", produces = MediaType.APPLICATION_JSON_VALUE)
+@RequestMapping(value="/basic-person", produces = MediaType.APPLICATION_JSON_VALUE)
 public class BasicPersonController {
 
     @GetMapping(value = "/healthcheck")

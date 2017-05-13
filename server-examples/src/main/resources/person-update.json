@@ -1,0 +1,19 @@
+{
+  "$schema": "http://json-schema.org/draft-04/schema#",
+  "title": "person",
+  "description": "JSON Person Update",
+  "type" : "object",
+  "properties": {
+    "id": {
+      "not": {}
+    },
+    "href": {
+      "not": {}
+    },
+    "name": {
+      "type": "string"
+    }
+  },
+  "additionalProperties": true
+}
+
