@@ -1,6 +1,6 @@
 package com.ofs.examples.controller.basic;
 
-import com.ofs.examples.controller.service.PersonService;
+import com.ofs.examples.service.PersonService;
 import com.ofs.examples.model.Person;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.MediaType;

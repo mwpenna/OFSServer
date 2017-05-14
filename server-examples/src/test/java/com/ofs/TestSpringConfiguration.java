@@ -1,6 +1,6 @@
 package com.ofs;
 
-import com.ofs.examples.controller.service.PersonService;
+import com.ofs.examples.service.PersonService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;

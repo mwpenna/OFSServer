@@ -1,6 +1,6 @@
 package com.ofs.examples.controller.security;
 
-import com.ofs.examples.controller.service.PersonService;
+import com.ofs.examples.service.PersonService;
 import com.ofs.examples.model.Person;
 import com.ofs.server.OFSController;
 import com.ofs.server.OFSServerId;

@@ -1,4 +1,4 @@
-package com.ofs.examples.controller.service;
+package com.ofs.examples.service;
 
 import com.ofs.examples.model.Person;
 import org.springframework.stereotype.Component;

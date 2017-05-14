@@ -1,7 +1,7 @@
 package com.ofs.integrationHelpers;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.ofs.examples.controller.service.PersonService;
+import com.ofs.examples.service.PersonService;
 import com.ofs.examples.model.Person;
 import com.ofs.server.client.AuthenticationClient;
 import com.ofs.server.model.JWTSubject;
