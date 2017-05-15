@@ -10,7 +10,6 @@ import com.ofs.server.model.OFSError;
 import com.ofs.server.model.OFSErrors;
 import org.junit.Before;
 import org.junit.Test;
-import xpertss.json.JSONObjectBuilder;
 
 import java.io.StringReader;
 
@@ -31,9 +30,7 @@ public class MinimumErrorDigesterTest {
     @Test
     public void testMinimumServiceFails() throws Exception
     {
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("service", 3);
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"service\":3}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "minimum");
@@ -46,10 +43,7 @@ public class MinimumErrorDigesterTest {
     @Test
     public void testMinimumAgeFails() throws Exception
     {
-
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("age", 17);
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"age\":17}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "minimum");
@@ -61,9 +55,7 @@ public class MinimumErrorDigesterTest {
     @Test
     public void testMinimumExclusiveFails() throws Exception
     {
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("age", 18);
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"age\":18}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "minimum");

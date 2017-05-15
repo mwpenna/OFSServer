@@ -10,7 +10,6 @@ import com.ofs.server.form.schema.SchemaFactory;
 import com.ofs.server.model.OFSError;
 import org.junit.Before;
 import org.junit.Test;
-import xpertss.json.JSONObjectBuilder;
 
 import java.io.StringReader;
 
@@ -31,9 +30,7 @@ public class MaximumErrorDigesterTest {
     @Test
     public void testMaximumServiceFails() throws Exception
     {
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("service", 21);
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"service\":21}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "maximum");
@@ -46,10 +43,7 @@ public class MaximumErrorDigesterTest {
     @Test
     public void testMinimumAgeFails() throws Exception
     {
-
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("age", 66);
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"age\":66}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "maximum");
@@ -61,9 +55,7 @@ public class MaximumErrorDigesterTest {
     @Test
     public void testMinimumExclusiveFails() throws Exception
     {
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("age", 65);
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"age\":65}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "maximum");

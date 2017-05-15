@@ -1,7 +1,7 @@
 package com.ofs.server.advise;
 
+import com.ofs.server.utils.Strings;
 import org.junit.Test;
-import xpertss.lang.Strings;
 
 import java.util.Locale;
 import java.util.MissingResourceException;

@@ -10,8 +10,6 @@ import com.ofs.server.model.OFSErrors;
 import com.ofs.server.model.OFSError;
 import org.junit.Before;
 import org.junit.Test;
-import xpertss.json.JSONArrayBuilder;
-import xpertss.json.JSONObjectBuilder;
 
 import java.io.StringReader;
 
@@ -33,11 +31,7 @@ public class PropertiesErrorDigesterTest {
     {
         AdditionalPropertiesErrorDigester objectUnderTest = new AdditionalPropertiesErrorDigester();
 
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("contact", new JSONObjectBuilder()
-                        .add("age", 22)
-                );
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"contact\":{\"age\":22}}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "additionalProperties");
@@ -51,13 +45,7 @@ public class PropertiesErrorDigesterTest {
     {
         AdditionalPropertiesErrorDigester objectUnderTest = new AdditionalPropertiesErrorDigester();
 
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("customerId", new JSONArrayBuilder()
-                        .add(new JSONObjectBuilder()
-                                .add("href", "string").add("name", "string")
-                        )
-                );
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"customerId\":[{\"href\":\"string\", \"name\":\"string\"}]}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "additionalProperties");
@@ -71,11 +59,7 @@ public class PropertiesErrorDigesterTest {
     {
         MaxPropertiesErrorDigester objectUnderTest = new MaxPropertiesErrorDigester();
 
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("contact", new JSONObjectBuilder()
-                        .add("name", "John").add("email", "joeblow@manheim.com")
-                );
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader(" {\"contact\":{\"name\":\"John\", \"email\":\"joeblow@manheim.com\"}}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "maxProperties");
@@ -89,11 +73,7 @@ public class PropertiesErrorDigesterTest {
     {
         MinPropertiesErrorDigester objectUnderTest = new MinPropertiesErrorDigester();
 
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("address", new JSONObjectBuilder()
-                        .add("state", "GA").add("zip", "30180")
-                );
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"address\":{\"state\":\"GA\", \"zip\":\"30180\"}}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "minProperties");

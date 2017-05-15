@@ -10,8 +10,6 @@ import com.ofs.server.model.OFSError;
 import com.ofs.server.model.OFSErrors;
 import org.junit.Before;
 import org.junit.Test;
-import xpertss.json.JSONArrayBuilder;
-import xpertss.json.JSONObjectBuilder;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -34,11 +32,7 @@ public class RequiredErrorDigesterTest {
     public void testContactRequired()
             throws IOException
     {
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("address", new JSONObjectBuilder()
-                        .add("street", "1046 Brown St").add("zip", "30180")
-                );
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"address\":{\"street\":\"1046 Brown St\", \"zip\":\"30180\"}}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "required");
@@ -51,11 +45,7 @@ public class RequiredErrorDigesterTest {
     public void testContactRequiresBothProperties()
             throws IOException
     {
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("contact", new JSONObjectBuilder()
-                        .add("name", "Joe").add("gender", "M")
-                );
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"contact\":{\"name\":\"Joe\", \"gender\":\"M\"}}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "required");
@@ -68,13 +58,7 @@ public class RequiredErrorDigesterTest {
     public void testAddressPropertiesRequired()
             throws IOException
     {
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("contact", new JSONObjectBuilder()
-                        .add("name", "Joe").add("email", "joe@manheim.com")
-                ).add("address", new JSONObjectBuilder()
-                        .add("city", "Atlanta").add("state", "GA")
-                );
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"contact\":{\"name\":\"Joe\", \"email\":\"joe@place.com\"},\"address\":{\"city\":\"Atlanta\", \"state\":\"GA\"}}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "required");
@@ -90,15 +74,7 @@ public class RequiredErrorDigesterTest {
     public void testArrayHrefRequired()
             throws IOException
     {
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("contact", new JSONObjectBuilder()
-                        .add("name", "Joe").add("email", "joe@manheim.com")
-                ).add("customerId", new JSONArrayBuilder()
-                        .add(new JSONObjectBuilder()
-                                .add("href", "http://first/")
-                        ).add(new JSONObjectBuilder())
-                );
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"contact\":{\"name\":\"Joe\", \"email\":\"joe@place.com\"},\"customerId\":[{\"href\":\"http://first/\"},{}]}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "required");

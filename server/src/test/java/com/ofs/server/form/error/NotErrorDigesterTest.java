@@ -10,7 +10,6 @@ import com.ofs.server.model.OFSErrors;
 import com.ofs.server.model.OFSError;
 import org.junit.Before;
 import org.junit.Test;
-import xpertss.json.JSONObjectBuilder;
 
 import java.io.StringReader;
 
@@ -31,9 +30,7 @@ public class NotErrorDigesterTest {
     @Test
     public void testNotHrefFails() throws Exception
     {
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("href", "https://api.manheim.com/tickets");
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"href\": \"https://api.com/tickets\"}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "not");
@@ -46,11 +43,7 @@ public class NotErrorDigesterTest {
     @Test
     public void testNotUpdatedOnCreatedOnFails() throws Exception
     {
-
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("href", "https://api.manheim.com/tickets")
-                .add("updatedOn", "2015-12-05T06:33:51.012Z");
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"href\":\"https://api.com/tickets\",\"updatedOn\":\"2017-12-05T06:33:51.012Z\"}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "not");
@@ -66,11 +59,7 @@ public class NotErrorDigesterTest {
     @Test
     public void testNotHrefUpdatedOnCreatedOnFails() throws Exception
     {
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("href", "https://api.manheim.com/tickets")
-                .add("createdOn", "2015-12-05T06:33:51.012Z")
-                .add("updatedOn", "2015-12-05T06:33:51.012Z");
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"href\":\"https://api.com/tickets\",\"createdOn\":\"2017-12-05T06:33:51.012Z\",\"updatedOn\":\"2017-12-05T06:33:51.012Z\"}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "not");
@@ -89,9 +78,7 @@ public class NotErrorDigesterTest {
     @Test
     public void testNotCurrencyFails() throws Exception
     {
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("currency", "EUR");
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"currency\":\"EUR\"}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "not");

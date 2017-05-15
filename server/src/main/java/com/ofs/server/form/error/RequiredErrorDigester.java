@@ -10,8 +10,8 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.ofs.server.model.OFSErrors;
 
+import static com.ofs.server.utils.Strings.isEmpty;
 import static java.lang.String.format;
-import static xpertss.lang.Strings.isEmpty;
 
 @Keyword("required")
 public class RequiredErrorDigester extends AbstractErrorDigester {
@@ -33,5 +33,4 @@ public class RequiredErrorDigester extends AbstractErrorDigester {
    {
       return (isEmpty(pointer)) ? field : format("%s/%s", pointer, field);
    }
-
 }

@@ -10,7 +10,6 @@ import com.ofs.server.model.OFSErrors;
 import com.ofs.server.model.OFSError;
 import org.junit.Before;
 import org.junit.Test;
-import xpertss.json.JSONObjectBuilder;
 
 import java.io.StringReader;
 
@@ -31,9 +30,7 @@ public class MultipleOfErrorDigesterTest {
     @Test
     public void testMultipleOfFails() throws Exception
     {
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("bag_count", 22);
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"bag_count\":22}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "multipleOf");

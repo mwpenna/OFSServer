@@ -10,8 +10,6 @@ import com.ofs.server.model.OFSError;
 import com.ofs.server.model.OFSErrors;
 import org.junit.Before;
 import org.junit.Test;
-import xpertss.json.JSONArrayBuilder;
-import xpertss.json.JSONObjectBuilder;
 
 import java.io.StringReader;
 
@@ -32,9 +30,7 @@ public class OneOfErrorDigesterTest {
     @Test
     public void testOneOfStringFails() throws Exception
     {
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("name", "Frank");
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"name\":\"Frank\"}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "oneOf");
@@ -47,11 +43,7 @@ public class OneOfErrorDigesterTest {
     @Test
     public void testAllOfTypeFails() throws Exception
     {
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("values", new JSONArrayBuilder()
-                        .add(15)
-                );
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"values\":[15]}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "oneOf");

@@ -10,7 +10,7 @@ import com.ofs.server.model.OFSErrors;
 import com.ofs.server.model.OFSError;
 import org.junit.Before;
 import org.junit.Test;
-import xpertss.json.JSONObjectBuilder;
+
 
 import java.io.StringReader;
 
@@ -30,11 +30,7 @@ public class DependenciesErrorDigesterTest {
     @Test
     public void testPropertyDependenciesNoBillingInfo() throws Exception
     {
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("purchase", new JSONObjectBuilder()
-                        .add("credit_card", 12345676555443L)
-                );
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"purchase\":{\"credit_card\":12345676555443}}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "dependencies");
@@ -48,11 +44,7 @@ public class DependenciesErrorDigesterTest {
     @Test
     public void testPropertyDependenciesNoBillingZip() throws Exception
     {
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("purchase", new JSONObjectBuilder()
-                        .add("billing_address", "1046 Brown St")
-                );
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"purchase\":{\"billing_address\":\"1046 Brown St\"}}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "dependencies");
@@ -60,13 +52,6 @@ public class DependenciesErrorDigesterTest {
         OFSError error = errors.getFieldError("purchase.billing_zip");
         assertEquals("test.purchase.billing_zip.required_dependency_missing", error.getCode());
     }
-
-
-
-    // TODO Add Schema Dependency Tests
-
-
-
 
     private OFSErrors processErrors(ProcessingReport report, ErrorDigester digester, String expectedKeyword)
     {

@@ -10,8 +10,6 @@ import com.ofs.server.model.OFSError;
 import com.ofs.server.model.OFSErrors;
 import org.junit.Before;
 import org.junit.Test;
-import xpertss.json.JSONArrayBuilder;
-import xpertss.json.JSONObjectBuilder;
 
 import java.io.StringReader;
 
@@ -32,9 +30,7 @@ public class AllOfErrorDigesterTest {
     @Test
     public void testAllOfStringFails() throws Exception
     {
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("name", "Erin");
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\n\"name\":\"Erin \"\n}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "allOf");
@@ -47,11 +43,8 @@ public class AllOfErrorDigesterTest {
     @Test
     public void testAllOfTypeFails() throws Exception
     {
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("values", new JSONArrayBuilder()
-                        .add(10).add("John").addNull()
-                );
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\n\"values\":[\n10,\n\"John\", \nnull]}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "allOf");

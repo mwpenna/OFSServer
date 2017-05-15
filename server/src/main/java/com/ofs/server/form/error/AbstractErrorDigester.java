@@ -3,15 +3,15 @@ package com.ofs.server.form.error;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.ofs.server.model.OFSErrors;
 import com.ofs.server.model.OFSError;
+import com.ofs.server.utils.CaseFormat;
 import org.springframework.util.StringUtils;
-import xpertss.lang.CaseFormat;
-import xpertss.lang.Integers;
 
+import static com.ofs.server.utils.CaseFormat.LOWER_CAMEL;
+import static com.ofs.server.utils.CaseFormat.LOWER_UNDERSCORE;
+import static com.ofs.server.utils.CaseFormat.forString;
+import static com.ofs.server.utils.Objects.ifNull;
 import static java.lang.String.format;
-import static xpertss.lang.CaseFormat.LOWER_CAMEL;
-import static xpertss.lang.CaseFormat.LOWER_UNDERSCORE;
-import static xpertss.lang.CaseFormat.forString;
-import static xpertss.lang.Objects.ifNull;
+
 
 public abstract class AbstractErrorDigester implements ErrorDigester {
 
@@ -21,7 +21,7 @@ public abstract class AbstractErrorDigester implements ErrorDigester {
         StringBuilder builder = new StringBuilder();
         for(String part : ptr.split("/")) {
             if(builder.length() > 0) builder.append(".");
-            if(Integers.parse(part, -1) != -1) {
+            if(parse(part, -1) != -1) {
                 builder.append("items");
             } else {
                 builder.append(part);
@@ -35,7 +35,7 @@ public abstract class AbstractErrorDigester implements ErrorDigester {
         StringBuilder builder = new StringBuilder();
         for(String part : ptr.split("/")) {
             if(builder.length() > 0) builder.append(".");
-            if(Integers.parse(part, -1) != -1) {
+            if(parse(part, -1) != -1) {
                 builder.append("items");
             } else {
                 CaseFormat format = ifNull(forString(part), LOWER_CAMEL);
@@ -65,5 +65,17 @@ public abstract class AbstractErrorDigester implements ErrorDigester {
             return node.asText();
         }
         return "";
+    }
+
+    private static int parse(CharSequence str, int def) {
+        try {
+            return Integer.parseInt(toString(str));
+        } catch (Exception var3) {
+            return def;
+        }
+    }
+
+    public static String toString(CharSequence seq) {
+        return seq != null?seq.toString():null;
     }
 }

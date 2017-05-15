@@ -16,6 +16,8 @@ import com.ofs.server.form.schema.SchemaFactory;
 import com.ofs.server.model.OFSEntity;
 import com.ofs.server.model.OFSErrors;
 
+import com.ofs.server.utils.CaseFormat;
+import com.ofs.server.utils.Strings;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.context.ApplicationContext;
@@ -30,8 +32,6 @@ import org.springframework.web.bind.support.WebDataBinderFactory;
 import org.springframework.web.context.request.NativeWebRequest;
 import org.springframework.web.method.support.HandlerMethodArgumentResolver;
 import org.springframework.web.method.support.ModelAndViewContainer;
-import xpertss.lang.CaseFormat;
-import xpertss.lang.Strings;
 
 import javax.servlet.http.HttpServletRequest;
 import java.io.IOException;
@@ -46,11 +46,12 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.function.Function;
 
+import static com.ofs.server.utils.CaseFormat.LOWER_UNDERSCORE;
+import static com.ofs.server.utils.CaseFormat.UPPER_CAMEL;
+import static com.ofs.server.utils.CaseFormat.forString;
+import static com.ofs.server.utils.Objects.ifNull;
 import static java.lang.String.format;
 import static java.nio.charset.StandardCharsets.*;
-import static xpertss.lang.CaseFormat.*;
-import static xpertss.lang.CaseFormat.UPPER_CAMEL;
-import static xpertss.lang.Objects.ifNull;
 
 @Component
 public class OFSServerFormResolver implements HandlerMethodArgumentResolver {

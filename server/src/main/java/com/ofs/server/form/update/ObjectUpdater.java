@@ -11,13 +11,14 @@ import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import com.fasterxml.jackson.databind.util.Annotations;
 import com.ofs.server.form.error.RequestContext;
 import com.ofs.server.model.OFSEntity;
-import xpertss.lang.Objects;
-import xpertss.util.Lists;
-import xpertss.util.Sets;
+import com.ofs.server.utils.Objects;
 
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 public class ObjectUpdater <T extends OFSEntity> {
 
@@ -109,11 +110,17 @@ public class ObjectUpdater <T extends OFSEntity> {
         JsonIgnoreProperties ignore = annotations.get(JsonIgnoreProperties.class);
         if(ignore != null && !ignore.allowSetters()) {
             // Filter out explicitly ignored
-            final Set<String> ignores = Sets.newHashSet(ignore.value());
-            results = Lists.filter(results, prop -> !ignores.contains(prop.getName()));
+            final Set<String> ignores = newHashSet(ignore.value());
+            results = results.stream().filter(prop -> !ignores.contains(prop.getName())).collect(Collectors.toList());
         }
-        // TODO Need to filter out JsonIgnoreType
+
         return results;
+    }
+
+    private HashSet<String> newHashSet(String... items) {
+        HashSet result = new HashSet();
+        Collections.addAll(result, items);
+        return result;
     }
 
     public static <T extends OFSEntity> ObjectUpdater<T> createFor(RequestContext context, Class<T> cls)

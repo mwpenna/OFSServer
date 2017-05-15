@@ -10,7 +10,6 @@ import com.ofs.server.model.OFSError;
 import com.ofs.server.model.OFSErrors;
 import org.junit.Before;
 import org.junit.Test;
-import xpertss.json.JSONObjectBuilder;
 
 import java.io.StringReader;
 
@@ -32,9 +31,7 @@ public class PatternErrorDigesterTest {
     @Test
     public void testRegexPatternFails() throws Exception
     {
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("phoneNumber", "(888)555-1212 ext. 532");
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"phoneNumber\":\"(888)555-1212 ext. 532\"}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "pattern");

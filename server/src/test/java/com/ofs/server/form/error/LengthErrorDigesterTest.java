@@ -10,7 +10,6 @@ import com.ofs.server.model.OFSErrors;
 import com.ofs.server.model.OFSError;
 import org.junit.Before;
 import org.junit.Test;
-import xpertss.json.JSONObjectBuilder;
 
 import java.io.StringReader;
 
@@ -32,9 +31,7 @@ public class LengthErrorDigesterTest {
     {
         MaxLengthErrorDigester objectUnderTest = new MaxLengthErrorDigester();
 
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("sir-name", "Alexadropovia");
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"sir-name\": \"Alexadropovia\"}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "maxLength");
@@ -49,9 +46,7 @@ public class LengthErrorDigesterTest {
     {
         MinLengthErrorDigester objectUnderTest = new MinLengthErrorDigester();
 
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("given-name", "Ed");
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"given-name\":\"Ed\"}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "minLength");

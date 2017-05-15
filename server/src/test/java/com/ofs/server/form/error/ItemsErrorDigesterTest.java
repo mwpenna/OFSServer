@@ -10,8 +10,6 @@ import com.ofs.server.model.OFSErrors;
 import com.ofs.server.model.OFSError;
 import org.junit.Before;
 import org.junit.Test;
-import xpertss.json.JSONArrayBuilder;
-import xpertss.json.JSONObjectBuilder;
 
 import java.io.StringReader;
 
@@ -33,11 +31,7 @@ public class ItemsErrorDigesterTest {
     {
         AdditionalItemsErrorDigester objectUnderTest = new AdditionalItemsErrorDigester();
 
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("address", new JSONArrayBuilder()
-                        .add(1600).add("Pennsylvania").add("Avenue").add("NW").add("Washington")
-                );
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{ \"address\":[ 1600, \"Pennsylvania\", \"Avenue\", \"NW\", \"Washington\"]}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "additionalItems");
@@ -52,11 +46,7 @@ public class ItemsErrorDigesterTest {
     {
         MaxItemsErrorDigester objectUnderTest = new MaxItemsErrorDigester();
 
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("parents", new JSONArrayBuilder()
-                        .add("John").add("Debbie").add("Frankie")
-                );
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"parents\":[\"John\", \"Debbie\", \"Frankie\"]}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "maxItems");
@@ -70,9 +60,7 @@ public class ItemsErrorDigesterTest {
     {
         MinItemsErrorDigester objectUnderTest = new MinItemsErrorDigester();
 
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("parents", new JSONArrayBuilder());
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\n\"parents\":[\n]\n}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "minItems");
@@ -92,11 +80,7 @@ public class ItemsErrorDigesterTest {
     {
         TypeErrorDigester objectUnderTest = new TypeErrorDigester();
 
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("address", new JSONArrayBuilder()
-                        .add("1600").add("Pennsylvania").add("Avenue").add("NW")
-                );
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{ \"address\":[ \"1600\", \"Pennsylvania\", \"Avenue\", \"NW\"]}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "type");
@@ -104,9 +88,6 @@ public class ItemsErrorDigesterTest {
         OFSError error = errors.getFieldError("address.items");
         assertEquals("test.address.items.type_mismatch", error.getCode());
     }
-
-
-
 
     private OFSErrors processErrors(ProcessingReport report, ErrorDigester digester, String expectedKeyword)
     {

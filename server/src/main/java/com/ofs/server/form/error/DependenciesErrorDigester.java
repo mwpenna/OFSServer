@@ -11,8 +11,8 @@ import com.fasterxml.jackson.databind.node.ArrayNode;
 import com.ofs.server.model.OFSError;
 import com.ofs.server.model.OFSErrors;
 
+import static com.ofs.server.utils.Strings.isEmpty;
 import static java.lang.String.format;
-import static xpertss.lang.Strings.isEmpty;
 
 @Keyword("dependencies")
 public class DependenciesErrorDigester extends AbstractErrorDigester {

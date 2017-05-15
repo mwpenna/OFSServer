@@ -12,6 +12,8 @@ import com.ofs.server.errors.UnauthorizedException;
 import com.ofs.server.errors.UnsupportedMediaTypeException;
 import com.ofs.server.model.OFSError;
 import com.ofs.server.model.OFSErrors;
+import com.ofs.server.utils.MapMessageFormat;
+import com.ofs.server.utils.Strings;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.CacheControl;
 import org.springframework.http.HttpHeaders;
@@ -21,8 +23,6 @@ import org.springframework.util.ReflectionUtils;
 import org.springframework.web.HttpMediaTypeNotSupportedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
-import xpertss.lang.Strings;
-import xpertss.text.MapMessageFormat;
 
 import javax.servlet.http.HttpServletRequest;
 import java.lang.reflect.Field;
@@ -38,8 +38,6 @@ public class OFSErrorAdvice {
 
     @Value("${ERROR_BUNDLE_NAME:OFSServerErrors}")
     private String bundleName;
-
-// No Error Body Error Responses
 
     @ExceptionHandler(value = Throwable.class)
     public ResponseEntity handleUnexpectedException(Throwable thr)
@@ -146,11 +144,6 @@ public class OFSErrorAdvice {
             return handleUnexpectedException(mre);
         }
     }
-
-
-
-
-// utility methods for creating headers
 
     private HttpHeaders createHeaders(String name, String value)
     {
