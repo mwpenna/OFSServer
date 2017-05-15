@@ -10,6 +10,7 @@ import com.couchbase.client.java.cluster.DefaultBucketSettings;
 import com.couchbase.client.java.env.CouchbaseEnvironment;
 import com.couchbase.client.java.env.DefaultCouchbaseEnvironment;
 import com.couchbase.client.java.error.BucketDoesNotExistException;
+import com.couchbase.client.java.error.InvalidPasswordException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
@@ -49,14 +50,16 @@ public class ConnectionManager {
             return bucketMap.get(bucketName);
         }
 
-        return openOrCreateBucket(bucketName);
+        Bucket bucket = openOrCreateBucket(bucketName);
+        bucketMap.put(bucketName, bucket);
+        return bucket;
     }
 
     private Bucket openOrCreateBucket(String bucketName) {
         try{
             return openConnection(bucketName);
         }
-        catch (BucketDoesNotExistException exception) {
+        catch (BucketDoesNotExistException | InvalidPasswordException exception) {
             log.warn("Bucket Does Not Exists. Attempting to create bucket");
             createNewBucket(bucketName);
 
@@ -66,18 +69,20 @@ public class ConnectionManager {
     }
 
     private void createNewBucket(String bucketName) {
-        ClusterManager clusterManager = cluster.clusterManager("Administrator", "password");
+        ClusterManager clusterManager = cluster.clusterManager(couchbaseConfigs.getClusterManagerUsername(),
+                couchbaseConfigs.getClusterManagerPassword());
         BucketSettings bucketSettings = new DefaultBucketSettings.Builder()
                 .type(BucketType.COUCHBASE)
                 .name(bucketName)
-                .password("")
+                .password(couchbaseConfigs.getBucketPassword())
+                .quota(125)
                 .build();
 
-        clusterManager.updateBucket(bucketSettings);
+        clusterManager.insertBucket(bucketSettings);
     }
 
     private Bucket openConnection(String bucketName) {
-        Bucket bucket = getCluster().openBucket(bucketName, couchbaseConfigs.getClusterPassword());
+        Bucket bucket = getCluster().openBucket(bucketName, couchbaseConfigs.getBucketPassword());
         bucketMap.put(bucketName, bucket);
         return bucket;
     }

@@ -1,5 +1,6 @@
 package com.ofs;
 
+import com.ofs.examples.repository.PersonRepository;
 import com.ofs.examples.service.PersonService;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -17,4 +18,8 @@ public class TestSpringConfiguration {
     @Primary
     @Bean
     public PersonService personService() { return mock(PersonService.class);}
+
+    @Primary
+    @Bean
+    public PersonRepository personRepository() { return mock(PersonRepository.class); }
 }
