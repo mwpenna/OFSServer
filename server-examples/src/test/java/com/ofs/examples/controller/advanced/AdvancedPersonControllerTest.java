@@ -94,12 +94,30 @@ public class AdvancedPersonControllerTest extends WebIntegrationTestHelper {
         assertTrue(errors.getErrors().get(1).getCode().equalsIgnoreCase("person.id.not_acceptable"));
     }
 
+    @Test
+    public void advancedPersonGetShouldReturnFilteredFields() throws Exception {
+        when(personService.getPersonById(anyString())).thenReturn(Optional.of(generatePerson("Matt")));
+        ResponseEntity<Person> response = restTemplate.getForEntity(apiUrl("advanced-person/id/"+id), Person.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNotNull(response.getBody().getPassword());
+        assertEquals(response.getBody().getPassword(), "test");
+    }
+
+    @Test
+    public void advancedPersonGetShouldNotReturnFilteredFields() throws Exception {
+        when(personService.getPersonById(anyString())).thenReturn(Optional.of(generatePerson("Kate")));
+        ResponseEntity<Person> response = restTemplate.getForEntity(apiUrl("advanced-person/id/"+id), Person.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+        assertNull(response.getBody().getPassword());
+    }
+
     private Person generatePerson(String name) {
         Person person = new Person();
 
         person.setName(name);
         person.setId(id);
         person.setHref(URI.create(apiUrl("advanced-person/id/"+id)));
+        person.setPassword("test");
 
         return person;
     }
