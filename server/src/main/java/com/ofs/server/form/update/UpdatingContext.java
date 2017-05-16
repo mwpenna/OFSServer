@@ -8,8 +8,6 @@ public class UpdatingContext<T> {
     private final T newEntity;
     private final String fieldName;
 
-
-
     private UpdatingContext(T oldEntity, T newEntity)
     {
         this.fieldName = null;
@@ -54,8 +52,6 @@ public class UpdatingContext<T> {
         //noinspection unchecked
         return new UpdatingContext(changes, property, oldValue, newValue);
     }
-
-
 
     public static <T> UpdatingContext<T> create(T oldEntity, T newEntity)
     {

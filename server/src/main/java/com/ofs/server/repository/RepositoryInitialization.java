@@ -8,8 +8,9 @@ import org.springframework.stereotype.Component;
 
 import java.util.Map;
 
-@Component
+
 @Slf4j
+@Component
 public class RepositoryInitialization implements ApplicationListener<ApplicationReadyEvent> {
 
     @Autowired
@@ -17,7 +18,7 @@ public class RepositoryInitialization implements ApplicationListener<Application
 
     @Override
     public void onApplicationEvent(ApplicationReadyEvent applicationReadyEvent) {
-        log.info("Starting Initialization and injection of buckets");
+        log.info("Starting Initialization of buckets");
         Map<String, Object> repositories =  applicationReadyEvent.getApplicationContext().getBeansWithAnnotation(OFSRepository.class);
 
         repositories.forEach((key, object) -> {
@@ -26,6 +27,6 @@ public class RepositoryInitialization implements ApplicationListener<Application
             connectionManager.getBucket(bucketName);
             log.info("Completed opening connection to bucket: {}", bucketName);
         });
-        log.info("Completed Initialization and injection of buckets");
+        log.info("Completed Initialization of buckets");
     }
 }

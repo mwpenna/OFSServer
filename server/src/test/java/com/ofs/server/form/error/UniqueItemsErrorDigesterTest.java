@@ -10,8 +10,6 @@ import com.ofs.server.model.OFSError;
 import com.ofs.server.model.OFSErrors;
 import org.junit.Before;
 import org.junit.Test;
-import xpertss.json.JSONArrayBuilder;
-import xpertss.json.JSONObjectBuilder;
 
 import java.io.StringReader;
 
@@ -32,11 +30,7 @@ public class UniqueItemsErrorDigesterTest {
     @Test
     public void testNonUniqueFails() throws Exception
     {
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("children", new JSONArrayBuilder()
-                        .add("Beth").add("Cindy").add("Beth")
-                );
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"children\":[\"Beth\", \"Cindy\", \"Beth\"]}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "uniqueItems");

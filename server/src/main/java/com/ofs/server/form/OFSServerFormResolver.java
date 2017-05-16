@@ -178,7 +178,7 @@ public class OFSServerFormResolver implements HandlerMethodArgumentResolver {
 //        } else {
 //            context.setResolver(new DefaultViewResolver());
 //        }
-//        context.setFilter(annotation.filter());
+//        context.setFilter(annotation.filterView());
         return context;
     }
 

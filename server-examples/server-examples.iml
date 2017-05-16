@@ -54,8 +54,6 @@
     <orderEntry type="library" name="Maven: javax.mail:mailapi:1.4.3" level="project" />
     <orderEntry type="library" name="Maven: javax.activation:activation:1.1" level="project" />
     <orderEntry type="library" name="Maven: net.sf.jopt-simple:jopt-simple:4.6" level="project" />
-    <orderEntry type="library" name="Maven: xpertss:JSONMarshaller:1.1.5" level="project" />
-    <orderEntry type="library" name="Maven: xpertss:stdlib:1.0.5" level="project" />
     <orderEntry type="library" name="Maven: org.projectlombok:lombok:1.16.8" level="project" />
     <orderEntry type="library" name="Maven: com.netflix.feign:feign-core:8.18.0" level="project" />
     <orderEntry type="library" name="Maven: org.jvnet:animal-sniffer-annotation:1.0" level="project" />

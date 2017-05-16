@@ -14,6 +14,8 @@ import com.fasterxml.jackson.databind.util.TokenBuffer;
 import com.ofs.server.OFSServerId;
 import com.ofs.server.OFSController;
 import com.ofs.server.errors.NotFoundException;
+import com.ofs.server.filter.DefaultFilter;
+import com.ofs.server.filter.Filter;
 import com.ofs.server.security.SecurityContext;
 import com.ofs.server.model.OFSEntity;
 import com.ofs.server.page.Page;
@@ -22,6 +24,7 @@ import com.ofs.server.security.Subject;
 import com.ofs.server.utils.Links;
 import com.ofs.server.utils.Objects;
 import com.ofs.server.utils.QueryBuilder;
+import com.ofs.server.utils.Strings;
 import com.ofs.server.utils.UrlBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -95,13 +98,12 @@ public class OFSResponseAdvice implements ResponseBodyAdvice<Object>{
                                   Class<? extends HttpMessageConverter<?>> converter,
                                   ServerHttpRequest input, ServerHttpResponse output)
     {
-        OFSController annotation = returnType.getDeclaringClass().getAnnotation(OFSController.class);
         RequestContext context = RequestContext.of(input, output, maxLimit);
 
         Type genType = returnType.getGenericParameterType();
         if(isEntity(genType)) {
             OFSEntity entity = (OFSEntity) body;
-            ObjectNode object = encodeEntity(context, entity);
+            ObjectNode object = encodeEntity(entity, returnType);
             if(object == null) throw new NotFoundException();
 
             body = processObject(context, body, object);
@@ -117,7 +119,7 @@ public class OFSResponseAdvice implements ResponseBodyAdvice<Object>{
             } else {
                 items = Collections.emptySet();
             }
-            body = processCollection(context, items);
+            body = processCollection(context, items, returnType);
         }
 
         processCacheControl(context);
@@ -140,7 +142,7 @@ public class OFSResponseAdvice implements ResponseBodyAdvice<Object>{
 
     }
 
-    private JsonNode processCollection(RequestContext context, Collection items)
+    private JsonNode processCollection(RequestContext context, Collection items, MethodParameter returnType)
     {
         HttpServletRequest request = context.getRequest();
         ObjectNode result = ofsObjectMapper.createObjectNode();
@@ -159,7 +161,7 @@ public class OFSResponseAdvice implements ResponseBodyAdvice<Object>{
         for(Object obj : items) {
             if(obj != null) {
                 OFSEntity entity = (OFSEntity) obj;
-                ObjectNode object = encodeEntity(context, entity);
+                ObjectNode object = encodeEntity(entity, returnType);
                 if(object != null) array.add(processObject(context, obj, object));
             }
         }
@@ -235,14 +237,15 @@ public class OFSResponseAdvice implements ResponseBodyAdvice<Object>{
         return object;
     }
 
-    private <T extends JsonNode> T encodeEntity(RequestContext context, OFSEntity entity)
+    private <T extends JsonNode> T encodeEntity(OFSEntity entity, MethodParameter returnType)
             throws IllegalArgumentException
     {
         if(entity == null) return null;
 
         Subject subject = SecurityContext.getSubject();
 
-        ObjectWriter writer = ofsObjectMapper.writer();
+//        ObjectWriter writer = ofsObjectMapper.writer();
+        ObjectWriter writer = ofsObjectMapper.writerWithView(resolveFilter(entity,returnType));
         TokenBuffer buf = new TokenBuffer(ofsObjectMapper, false);
         if (ofsObjectMapper.isEnabled(USE_BIG_DECIMAL_FOR_FLOATS)) {
             buf = buf.forceUseOfBigDecimal(true);
@@ -257,6 +260,17 @@ public class OFSResponseAdvice implements ResponseBodyAdvice<Object>{
             throw new IllegalArgumentException(e.getMessage(), e);
         }
         return (T) result;
+    }
+
+    private Class<?> resolveFilter(OFSEntity entity, MethodParameter returnType) {
+        OFSController annotation = returnType.getDeclaringClass().getAnnotation(OFSController.class);
+        Filter filter = new DefaultFilter();
+
+        if(!Strings.isEmpty(annotation.resolver())) {
+            filter = context.getBean(annotation.resolver(), Filter.class);
+        }
+
+        return filter.filterView(entity, SecurityContext.getSubject());
     }
 
     private BeanPropertyDefinition findPropertyDefinition(BeanDescription desc, String propName)

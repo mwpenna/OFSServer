@@ -6,15 +6,15 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import com.ofs.server.config.JacksonConfiguration;
 import org.junit.BeforeClass;
 import org.junit.Test;
-import xpertss.time.Chronology;
 
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 
 import static org.junit.Assert.assertEquals;
 
 public class DateDeserializerTest {
-
-    private static final Chronology chrono = Chronology.create(TimeZone.getTimeZone("UTC"));
 
     private static ObjectMapper jackson;
 
@@ -30,10 +30,10 @@ public class DateDeserializerTest {
     public void testIsoDateWithMillisParsesToJavaUtilDate() throws Exception
     {
         ObjectNode raw = jackson.createObjectNode();
-        raw.put("date", "2016-10-22T12:35:11.123Z");
+        raw.put("date", "2016-10-22T12:35:11.111Z");
         ObjectReader reader = jackson.readerFor(Bill.class);
         Bill decoded = reader.readValue(raw);
-        assertEquals(chrono.newDate(2016,10,22,12,35,11,123), decoded.getDate());
+        assertEquals(newDate(2016,10,22,12,35,11).toString(), decoded.getDate().toString());
     }
 
     @Test
@@ -43,6 +43,17 @@ public class DateDeserializerTest {
         raw.put("date", "2016-10-22T12:35:11Z");
         ObjectReader reader = jackson.readerFor(Bill.class);
         Bill decoded = reader.readValue(raw);
-        assertEquals(chrono.newDate(2016,10,22,12,35,11), decoded.getDate());
+        assertEquals(newDate(2016,10,22,12,35,11), decoded.getDate());
+    }
+
+    private Date newDate(int year, int month, int day, int hour, int min, int sec) {
+        return newDate(year, month, day, hour, min, sec, 0);
+    }
+
+    private Date newDate(int year, int month, int day, int hour, int min, int sec, int millis) {
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("UTC"), Locale.getDefault());
+        cal.set(year, month - 1, day, hour, min, sec);
+        cal.set(14, millis);
+        return cal.getTime();
     }
 }

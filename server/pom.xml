@@ -47,14 +47,6 @@
             <artifactId>json-schema-validator</artifactId>
         </dependency>
         <dependency>
-            <groupId>xpertss</groupId>
-            <artifactId>JSONMarshaller</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>xpertss</groupId>
-            <artifactId>stdlib</artifactId>
-        </dependency>
-        <dependency>
             <groupId>org.projectlombok</groupId>
             <artifactId>lombok</artifactId>
         </dependency>

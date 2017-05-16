@@ -7,9 +7,6 @@ import java.util.Map;
 import java.util.Set;
 import java.util.stream.Stream;
 
-/**
- * Created by mpenna on 3/31/17.
- */
 public class ChangeSet implements Iterable {
 
     private Map<String,PropertyChange> changes;
@@ -18,12 +15,6 @@ public class ChangeSet implements Iterable {
     {
         this.changes = changes;
     }
-
-
-    // TODO Property names can span sub-objects.
-    // Should I provide some sort of functionality to sub divide the change set based on object depth?
-    // Maybe the PropertyChange should have some sort of flag indicating object vs property
-
 
     /**
      * Returns a PropertyChange for a given property by name or {@code null}
@@ -88,23 +79,10 @@ public class ChangeSet implements Iterable {
         return changes.values().iterator();
     }
 
-
     static Builder builder()
     {
         return new Builder();
     }
-
-
-    /**
-     * So I envision the most common use cases for change sets to be one of the following
-     *
-     * 1) If property X was changed fire a specific event: for example status
-     * 2) If property Y was changed check property Z was also changed
-     * 3) If property A was changed throw security exception
-     * 4) Iterate list of changes for an outbound change log/event/message
-     * 5) Given named property, apply some validation rule to new value
-     * 6) Possibly used for database update (rather than updating entire object)
-     */
 
     static class Builder {
 

@@ -20,8 +20,6 @@ public class RequestContext {
         this.mapper = mapper;
     }
 
-
-
     public ErrorDigesterFactory getFactory()
     {
         return factory;
@@ -31,8 +29,6 @@ public class RequestContext {
     {
         return mapper;
     }
-
-
 
     public void setRequestBody(ServletServerHttpRequest requestBody)
     {
@@ -44,8 +40,6 @@ public class RequestContext {
         return requestBody;
     }
 
-
-
     public void setEntityName(String entityName)
     {
         this.entityName = entityName;
@@ -56,8 +50,6 @@ public class RequestContext {
         return entityName;
     }
 
-
-
     public void setSchema(JsonSchema schema)
     {
         this.schema = schema;
@@ -67,5 +59,4 @@ public class RequestContext {
     {
         return schema;
     }
-
 }

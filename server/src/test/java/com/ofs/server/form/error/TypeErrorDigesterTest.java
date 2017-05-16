@@ -10,8 +10,6 @@ import com.ofs.server.model.OFSError;
 import com.ofs.server.model.OFSErrors;
 import org.junit.Before;
 import org.junit.Test;
-import xpertss.json.JSONArrayBuilder;
-import xpertss.json.JSONObjectBuilder;
 
 import java.io.IOException;
 import java.io.StringReader;
@@ -34,9 +32,7 @@ public class TypeErrorDigesterTest {
     public void testGlobalType()
             throws IOException
     {
-        JSONArrayBuilder builder = new JSONArrayBuilder()
-                .add("Hello").add("Goodbye");
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("[\"Hello\", \"Goodbye\"]"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "type");
@@ -51,9 +47,7 @@ public class TypeErrorDigesterTest {
     public void testSimplePropertyType()
             throws IOException
     {
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("contact", "John");
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"contact\":\"John\"}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "type");
@@ -67,9 +61,7 @@ public class TypeErrorDigesterTest {
     public void testLowerCamelPropertyType()
             throws IOException
     {
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("ticketAmount", "string");
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"ticketAmount\":\"string\"}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "type");
@@ -83,9 +75,7 @@ public class TypeErrorDigesterTest {
     public void testLowerUnderscorePropertyType()
             throws IOException
     {
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("street_name", true);
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"street_name\":true}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "type");
@@ -99,9 +89,7 @@ public class TypeErrorDigesterTest {
     public void testHyphenatedPropertyType()
             throws IOException
     {
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("currency-code", 22);
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"currency-code\":22}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "type");
@@ -115,11 +103,7 @@ public class TypeErrorDigesterTest {
     public void testSimpleSubObjectPropertyType()
             throws IOException
     {
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("contact", new JSONObjectBuilder()
-                        .add("name", 22)
-                );
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"contact\":{\"name\":22}}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "type");
@@ -133,11 +117,7 @@ public class TypeErrorDigesterTest {
     public void testLowerCamelSubObjectPropertyType()
             throws IOException
     {
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("contact", new JSONObjectBuilder()
-                        .add("phoneNumber", 22)
-                );
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"contact\":{\"phoneNumber\":22}}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "type");
@@ -151,11 +131,7 @@ public class TypeErrorDigesterTest {
     public void testArrayEntityPropertyType()
             throws IOException
     {
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("customerId", new JSONObjectBuilder()
-                        .add("href", 22)
-                );
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"customerId\":{\"href\":22}}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "type");
@@ -169,11 +145,7 @@ public class TypeErrorDigesterTest {
     public void testArrayItemPropertyType()
             throws IOException
     {
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("customerId", new JSONArrayBuilder()
-                        .add("string")
-                );
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"customerId\":[\"string\"]}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "type");
@@ -187,12 +159,7 @@ public class TypeErrorDigesterTest {
     public void testArraySubItemPropertyType()
             throws IOException
     {
-        JSONObjectBuilder builder = new JSONObjectBuilder()
-                .add("customerId", new JSONArrayBuilder()
-                        .add(new JSONObjectBuilder()
-                                .add("href", 22))
-                );
-        JsonNode json = JsonLoader.fromReader(new StringReader(builder.build().toString()));
+        JsonNode json = JsonLoader.fromReader(new StringReader("{\"customerId\":[{\"href\":22}]}"));
 
         ProcessingReport report = schema.validateUnchecked(json, true);
         OFSErrors errors = processErrors(report, objectUnderTest, "type");
