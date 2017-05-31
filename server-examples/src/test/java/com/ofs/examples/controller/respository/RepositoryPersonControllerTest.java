@@ -11,7 +11,10 @@ import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
+import java.util.UUID;
 
 import static org.junit.Assert.*;
 import static org.mockito.Matchers.any;
@@ -64,6 +67,37 @@ public class RepositoryPersonControllerTest extends WebIntegrationTestHelper {
         HttpEntity<String> entity = new HttpEntity<>(request, headers);
         ResponseEntity<String> response = restTemplate.postForEntity(apiUrl("repository-person/id/"+id), entity, String.class);
         assertEquals(HttpStatus.NO_CONTENT, response.getStatusCode());
+    }
+
+    @Test
+    public void repositoryPersonGetPersonsByName() throws Exception {
+        when(personRepository.getPersonsByName(anyString())).thenReturn(Optional.of(generatePersonList()));
+        HttpHeaders headers = createHeaders("123");
+        HttpEntity<String> entity = new HttpEntity<>(headers);
+
+        ResponseEntity<String> response = restTemplate.exchange(apiUrl("repository-person/name/Matt1"), HttpMethod.GET,entity, String.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
+
+
+    private List<Person> generatePersonList() {
+        List<Person> personList = new ArrayList<>();
+
+        Person person = new Person();
+
+        person.setName("Matt1");
+        person.setHref(URI.create(apiUrl("repository-person/id/"+id)));
+        person.setId(id);
+        personList.add(person);
+
+        Person person2 = new Person();
+
+        person2.setName("Matt1");
+        person2.setHref(URI.create(apiUrl("repository-person/id/"+id)));
+        person2.setId(UUID.randomUUID());
+        personList.add(person2);
+
+        return personList;
     }
 
     private Person generatePerson() {

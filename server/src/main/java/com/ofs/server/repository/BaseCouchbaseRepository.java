@@ -17,6 +17,9 @@ import org.springframework.beans.factory.annotation.Qualifier;
 
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Objects;
@@ -45,7 +48,7 @@ public abstract class BaseCouchbaseRepository<T> {
             resultMap =  row.value().toMap();
         }
 
-        return mapResultsToObject(resultMap, clazz);
+        return mapResultsToOptional(resultMap, clazz);
     }
 
     public Optional<T> queryForObjectById(String id, Bucket bucket, Class clazz) {
@@ -63,7 +66,7 @@ public abstract class BaseCouchbaseRepository<T> {
         }
         else {
             log.info("Attempting to map results for id {} to class {}", id, clazz.getName());
-            return mapResultsToObject(jsonDocument.content().toMap(), clazz);
+            return mapResultsToOptional(jsonDocument.content().toMap(), clazz);
         }
     }
 
@@ -92,6 +95,28 @@ public abstract class BaseCouchbaseRepository<T> {
     public void delete(String id, Bucket bucket) {
         Objects.requireNonNull(id);
         bucket.remove(id);
+    }
+
+    public Optional<List<T>> queryForObjectListByParameters(ParameterizedN1qlQuery query, Bucket bucket, Class<T> clazz) throws Exception {
+        Objects.requireNonNull(query);
+        Objects.requireNonNull(clazz);
+        Objects.requireNonNull(bucket);
+        N1qlQueryResult queryResult = queryForObject(query, bucket);
+
+        List<T> userList = new ArrayList<>();
+
+        N1qlQueryRow row;
+        for(Iterator var6 = queryResult.iterator(); var6.hasNext();) {
+            row = (N1qlQueryRow)var6.next();
+            userList.add(mapResultsToObject(row.value().toMap(), clazz));
+        }
+
+        if(userList.isEmpty()) {
+            return Optional.empty();
+        }
+        else {
+            return Optional.of(userList);
+        }
     }
 
     private JsonDocument modifyJsonDocument(String id, JsonDocument jsonDocument, Object object) throws com.fasterxml.jackson.core.JsonProcessingException {
@@ -138,7 +163,7 @@ public abstract class BaseCouchbaseRepository<T> {
         return queryResult;
     }
 
-    private Optional<T> mapResultsToObject(Map resultMap, Class clazz) {
+    private Optional<T> mapResultsToOptional(Map resultMap, Class clazz) {
         T entity;
 
         try {
@@ -155,6 +180,22 @@ public abstract class BaseCouchbaseRepository<T> {
         }
         catch(IllegalAccessException | InstantiationException | InvocationTargetException e) {
             throw new RuntimeException(format("Failed to create entity %s", clazz.getTypeName()), e);
+        }
+    }
+
+    private T mapResultsToObject(Map resultMap, Class clazz) {
+        try {
+            if(resultMap != null && !resultMap.isEmpty()) {
+                Constructor e = clazz.getConstructor(new Class[]{Map.class});
+                Object entity = e.newInstance(new Object[]{resultMap});
+                return (T) entity;
+            } else {
+                return null;
+            }
+        } catch (NoSuchMethodException var5) {
+            throw new IllegalArgumentException(String.format("%s is missing a map constructor", new Object[]{clazz.getTypeName()}), var5);
+        } catch (InstantiationException | InvocationTargetException | IllegalAccessException var6) {
+            throw new RuntimeException(String.format("Failed to create entity %s", new Object[]{clazz.getTypeName()}), var6);
         }
     }
 }

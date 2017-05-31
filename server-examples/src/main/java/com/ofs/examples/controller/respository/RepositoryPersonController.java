@@ -18,6 +18,8 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.net.URI;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
@@ -57,6 +59,20 @@ public class RepositoryPersonController {
             log.error("Person not found");
             throw new NotFoundException();
         }
+    }
+
+    @GetMapping(value = "/name/{name}")
+    public List<Person> getPersonsByName(@PathVariable("name") String name) throws Exception {
+        log.debug("Fetching Persons with name {}", name);
+        Optional<List<Person>> personsList = personRepository.getPersonsByName(name);
+
+        if(personsList.isPresent()) {
+            return personsList.get();
+        }
+        else {
+            return new ArrayList<>();
+        }
+
     }
 
     @PostMapping(value = "/id/{id}", consumes = MediaType.APPLICATION_JSON_VALUE)

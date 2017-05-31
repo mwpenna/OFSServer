@@ -15,6 +15,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 
+import java.util.List;
 import java.util.NoSuchElementException;
 import java.util.Objects;
 import java.util.Optional;
@@ -94,6 +95,26 @@ public class PersonRepository extends BaseCouchbaseRepository<Person>{
         catch (DocumentDoesNotExistException e) {
             log.warn("User with id: {} was not found", id);
             throw new NotFoundException();
+        }
+        catch (TemporaryFailureException e) {
+            log.error("Temporary Failure with couchbase occured" , e);
+            throw new ServiceUnavailableException();
+        }
+    }
+
+    public Optional<List<Person>> getPersonsByName(String name) throws Exception{
+        if(name == null) {
+            return Optional.empty();
+        }
+
+        try {
+            ParameterizedN1qlQuery query = ParameterizedN1qlQuery.parameterized(
+                    generateGetByNameQuery(), generateGetByNameParameters(name));
+            return queryForObjectListByParameters(query, connectionManager.getBucket("person"), Person.class);
+        }
+        catch (NoSuchElementException e) {
+            log.info("No results returned for getPersonByName with name: {}", name);
+            return Optional.empty();
         }
         catch (TemporaryFailureException e) {
             log.error("Temporary Failure with couchbase occured" , e);
