@@ -17,7 +17,7 @@ public class SecurityPersonControllerTest extends WebIntegrationTestHelper {
 
     @Test
     public void securityPersonValidAuthenticationTest() throws Exception {
-        when(authenticationClient.authenticate(any())).thenReturn(generateJWTServerSubject(JWTSubject.Role.SYSTEM_ADMIN));
+        when(authClient.authenticate(any(), any())).thenReturn(generateJWTServerSubject(JWTSubject.Role.SYSTEM_ADMIN));
         HttpHeaders headers = createHeaders("123");
         headers.setContentType(MediaType.APPLICATION_JSON);
 
@@ -30,7 +30,7 @@ public class SecurityPersonControllerTest extends WebIntegrationTestHelper {
 
     @Test
     public void securityPersonInValidAuthenticationTest() throws Exception {
-        when(authenticationClient.authenticate(any())).thenReturn(generateJWTServerSubject(JWTSubject.Role.ACCOUNT_MANAGER));
+        when(authClient.authenticate(any(), any())).thenReturn(generateJWTServerSubject(JWTSubject.Role.ACCOUNT_MANAGER));
         HttpHeaders headers = createHeaders("123");
         headers.setContentType(MediaType.APPLICATION_JSON);
 

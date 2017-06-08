@@ -2,6 +2,7 @@ package com.ofs;
 
 import com.ofs.examples.repository.PersonRepository;
 import com.ofs.examples.service.PersonService;
+import com.ofs.server.client.AuthClient;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.context.annotation.Primary;
@@ -22,4 +23,8 @@ public class TestSpringConfiguration {
     @Primary
     @Bean
     public PersonRepository personRepository() { return mock(PersonRepository.class); }
+
+    @Primary
+    @Bean
+    public AuthClient authClient() { return mock(AuthClient.class); }
 }

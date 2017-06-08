@@ -4,14 +4,11 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.ofs.examples.repository.PersonRepository;
 import com.ofs.examples.service.PersonService;
 import com.ofs.examples.model.Person;
-import com.ofs.server.client.AuthenticationClient;
+import com.ofs.server.client.AuthClient;
 import com.ofs.server.model.JWTSubject;
-import com.ofs.server.repository.ConnectionManager;
-import com.ofs.server.repository.OFSRepository;
 import com.ofs.server.repository.RepositoryInitialization;
 import org.junit.Before;
 import org.junit.runner.RunWith;
-import org.mockito.stubbing.OngoingStubbing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
@@ -25,13 +22,10 @@ import org.springframework.web.client.ResponseErrorHandler;
 import org.springframework.web.client.RestTemplate;
 
 import java.io.IOException;
-import java.lang.annotation.Annotation;
-import java.lang.annotation.ElementType;
 import java.net.URI;
 import java.util.UUID;
 
 import static org.mockito.AdditionalMatchers.eq;
-import static org.mockito.Mockito.when;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest(webEnvironment= SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -53,8 +47,8 @@ public abstract class WebIntegrationTestHelper {
     @Autowired
     public PersonRepository personRepository;
 
-    @MockBean
-    public AuthenticationClient authenticationClient;
+    @Autowired
+    public AuthClient authClient;
 
     @MockBean
     RepositoryInitialization repositoryInitialization;

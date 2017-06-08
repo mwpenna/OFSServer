@@ -1,11 +1,11 @@
 package com.ofs.server.security;
 
+import com.ofs.server.client.AuthClient;
 import com.ofs.server.errors.ForbiddenException;
-import com.ofs.server.client.AuthenticationClient;
 import com.ofs.server.model.JWTSubject;
-import feign.FeignException;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Component;
 import org.springframework.web.method.HandlerMethod;
 import org.springframework.web.servlet.handler.HandlerInterceptorAdapter;
@@ -17,7 +17,10 @@ import javax.servlet.http.HttpServletResponse;
 @Component
 public class AuthInterceptor extends HandlerInterceptorAdapter {
     @Autowired
-    AuthenticationClient authenticationClient;
+    AuthClient authClient;
+
+    @Value("${AUTH_CLIENT_URL:http://localhost:8081/users/authenticate}")
+    private String authClientUrl= "http://localhost:8081/users/authenticate";
 
     @Override
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
@@ -37,17 +40,21 @@ public class AuthInterceptor extends HandlerInterceptorAdapter {
     private JWTSubject authenticateUser(String authToken) {
         JWTSubject subject;
         try{
-            subject = authenticationClient.authenticate(authToken);
+            subject = authClient.authenticate(authClientUrl, authToken);
         }
-        catch (FeignException ex) {
-            if(ex.status() == 403) {
-                log.error("User unathorized", ex);
-                throw new ForbiddenException();
-            }
-
-            log.error("Unexspected error occured when trying to authenticate user", ex);
-            throw ex;
+        catch (Exception e) {
+            log.error("Exception occurend when trying to authenticate the user: {}", e);
+            throw new ForbiddenException();
         }
+//        catch (FeignException ex) {
+//            if(ex.status() == 403) {
+//                log.error("User unathorized", ex);
+//                throw new ForbiddenException();
+//            }
+//
+//            log.error("Unexspected error occured when trying to authenticate user", ex);
+//            throw ex;
+//        }
 
         return subject;
     }
