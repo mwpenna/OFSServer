@@ -55,7 +55,8 @@ public class OFSErrorAdvice {
     @ExceptionHandler(value = ForbiddenException.class)
     public ResponseEntity handleForbidden()
     {
-        return new ResponseEntity(HttpStatus.FORBIDDEN);
+        HttpHeaders headers = createHeaders("Access-Control-Allow-Origin", "*");
+        return new ResponseEntity(headers, HttpStatus.FORBIDDEN);
     }
 
     @ExceptionHandler(value = NotFoundException.class)
@@ -158,8 +159,6 @@ public class OFSErrorAdvice {
         headers.setCacheControl(CacheControl.noCache().getHeaderValue());
         return headers;
     }
-
-
 
 // utility methods to create localized error bodies
 
