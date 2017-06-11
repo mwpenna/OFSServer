@@ -25,6 +25,7 @@ import org.springframework.http.HttpHeaders;
 import java.io.IOException;
 import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
+import java.util.List;
 
 import static java.lang.String.format;
 
@@ -90,6 +91,10 @@ public class OFSServerForm<T extends OFSEntity> {
         return updater.update(entity, requestBody);
     }
 
+    public List<T> search(List<T> entityList) {
+
+        return entityList;
+    }
 
     public <V> V findProperty(String jsonPath)
     {

@@ -122,11 +122,36 @@ public class PersonRepository extends BaseCouchbaseRepository<Person>{
         }
     }
 
+    public Optional<List<Person>> getAllPersons() throws Exception{
+
+        try {
+            ParameterizedN1qlQuery query = ParameterizedN1qlQuery.parameterized(
+                    generateGetByCompanyIdQuery(), generateGetByCompanyIdParameters());
+            return queryForObjectListByParameters(query, connectionManager.getBucket("person"), Person.class);
+        }
+        catch (NoSuchElementException e) {
+            log.info("No results returned for getAllPersons");
+            return Optional.empty();
+        }
+        catch (TemporaryFailureException e) {
+            log.error("Temporary Failure with couchbase occured" , e);
+            throw new ServiceUnavailableException();
+        }
+    }
+
     private String generateGetByNameQuery() {
         return "SELECT `" + connectionManager.getBucket("person").name() + "`.* FROM `" + connectionManager.getBucket("person").name() + "` where name = $name";
     }
 
     private JsonObject generateGetByNameParameters(String name) {
         return JsonObject.create().put("$name", name);
+    }
+
+    private String generateGetByCompanyIdQuery() {
+        return "SELECT `" + connectionManager.getBucket("person").name() + "`.* FROM `" + connectionManager.getBucket("person").name();
+    }
+
+    private JsonObject generateGetByCompanyIdParameters() {
+        return JsonObject.create();
     }
 }

@@ -100,4 +100,17 @@ public class RepositoryPersonController {
         personRepository.deletePersonById(id);
         return ResponseEntity.noContent().build();
     }
+
+    @PostMapping(value = "search", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public List<Person> search(OFSServerForm<Person> form) throws Exception {
+        log.debug("Fetching All Persons");
+        Optional<List<Person>> personsList = personRepository.getAllPersons();
+
+        if(personsList.isPresent()) {
+            return form.search(personsList.get());
+        }
+        else {
+            return new ArrayList<>();
+        }
+    }
 }

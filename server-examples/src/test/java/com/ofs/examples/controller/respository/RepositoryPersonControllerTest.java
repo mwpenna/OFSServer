@@ -79,6 +79,19 @@ public class RepositoryPersonControllerTest extends WebIntegrationTestHelper {
         assertEquals(HttpStatus.OK, response.getStatusCode());
     }
 
+    @Test
+    public void repositoryPersonSearch() throws Exception {
+        when(personRepository.getAllPersons()).thenReturn(Optional.of(generatePersonList()));
+
+        HttpHeaders headers = createHeaders("123");
+        headers.setContentType(MediaType.APPLICATION_JSON);
+
+        String request = ofsObjectMapper.writeValueAsString(generateDefaultPersonRequest());
+
+        HttpEntity<String> entity = new HttpEntity<>(request, headers);
+        ResponseEntity<String> response = restTemplate.postForEntity(apiUrl("repository-person/search"), entity, String.class);
+        assertEquals(HttpStatus.OK, response.getStatusCode());
+    }
 
     private List<Person> generatePersonList() {
         List<Person> personList = new ArrayList<>();
