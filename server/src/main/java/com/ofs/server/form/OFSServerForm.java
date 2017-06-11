@@ -14,6 +14,7 @@ import com.ofs.server.errors.BadRequestException;
 import com.ofs.server.form.error.ErrorDigester;
 import com.ofs.server.form.error.RequestContext;
 import com.ofs.server.form.schema.JsonSchema;
+import com.ofs.server.form.search.ObjectSearch;
 import com.ofs.server.form.update.ObjectUpdater;
 import com.ofs.server.model.OFSEntity;
 import com.ofs.server.model.OFSErrors;
@@ -91,9 +92,22 @@ public class OFSServerForm<T extends OFSEntity> {
         return updater.update(entity, requestBody);
     }
 
-    public List<T> search(List<T> entityList) {
+    public List<T> search(List<T> entityList) throws IOException {
 
-        return entityList;
+        // Check CAS headers
+        HttpHeaders headers = context.getRequestBody().getHeaders();
+
+        // Schema Validation if it exists
+        JsonSchema schema = context.getSchema();
+        if(schema != null) {
+            ProcessingReport report = schema.validateUnchecked(requestBody, true);
+            if(!report.isSuccess()) {
+                throw new BadRequestException(createErrors(report, context.getEntityName()));
+            }
+        }
+
+        ObjectSearch<T> searcher = ObjectSearch.createFor(context, type);
+        return searcher.search(entityList, requestBody);
     }
 
     public <V> V findProperty(String jsonPath)
