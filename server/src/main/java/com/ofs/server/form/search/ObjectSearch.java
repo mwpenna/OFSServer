@@ -36,10 +36,10 @@ public class ObjectSearch <T extends OFSEntity> {
         T searchValues = reader.readValue(request);
 
         BeanDescription desc = jackson.getDeserializationConfig().introspect(type);
+        SearchContext searchContext = SearchContext.create(searchValues, resultList);
+        process(searchContext, desc, request);
 
-        process(searchValues, desc, request);
-
-        return resultList;
+        return searchContext.getEntityList();
     }
 
     public static <T extends OFSEntity> ObjectSearch<T> createFor(RequestContext context, Class<T> cls)
@@ -49,12 +49,15 @@ public class ObjectSearch <T extends OFSEntity> {
         return new ObjectSearch<T>(context, javaType);
     }
 
-    private void process(T searchValues, BeanDescription desc, JsonNode node)
+    private void process(SearchContext searchContext, BeanDescription desc, JsonNode node)
     {
+        List<T> filteredList = null;
         for(BeanPropertyDefinition propDef : filter(desc)) {
             AnnotatedMember accessor = propDef.getAccessor();
-            Object fieldValue = accessor.getValue(searchValues);
-            String doSomething = "";
+            Object fieldValue = accessor.getValue(searchContext.getRequest());
+            if(fieldValue != null) {
+                searchContext.filterList(fieldValue.toString(), accessor);
+            }
         }
     }
 

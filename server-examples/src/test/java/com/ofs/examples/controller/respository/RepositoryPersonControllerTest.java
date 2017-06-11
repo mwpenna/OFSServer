@@ -89,8 +89,10 @@ public class RepositoryPersonControllerTest extends WebIntegrationTestHelper {
         String request = ofsObjectMapper.writeValueAsString(generateDefaultPersonRequest());
 
         HttpEntity<String> entity = new HttpEntity<>(request, headers);
-        ResponseEntity<String> response = restTemplate.postForEntity(apiUrl("repository-person/search"), entity, String.class);
+        ResponseEntity<List> response = restTemplate.postForEntity(apiUrl("repository-person/search"), entity, List.class);
         assertEquals(HttpStatus.OK, response.getStatusCode());
+
+        assertEquals(response.getBody().size(), 1);
     }
 
     private List<Person> generatePersonList() {
@@ -105,7 +107,7 @@ public class RepositoryPersonControllerTest extends WebIntegrationTestHelper {
 
         Person person2 = new Person();
 
-        person2.setName("Matt1");
+        person2.setName("goober");
         person2.setHref(URI.create(apiUrl("repository-person/id/"+id)));
         person2.setId(UUID.randomUUID());
         personList.add(person2);
