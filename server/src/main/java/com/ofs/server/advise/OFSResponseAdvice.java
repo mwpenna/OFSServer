@@ -191,7 +191,7 @@ public class OFSResponseAdvice implements ResponseBodyAdvice<Object>{
 
     private boolean isPageable(HttpServletRequest request)
     {
-        return Objects.isOneOf(request.getMethod(), "GET", "HEAD");
+        return Objects.isOneOf(request.getMethod(), "POST", "GET", "HEAD");
     }
 
     private void applyPaging(Page page, URI requestUri, ObjectNode object)
