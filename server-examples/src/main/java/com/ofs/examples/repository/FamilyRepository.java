@@ -51,7 +51,7 @@ public class FamilyRepository extends BaseCouchbaseRepository<Family> {
     }
 
     private String generateGetFamilyMembersQuery() {
-        return "SELECT `" + connectionManager.getBucket("family").name() + "`.* FROM `" + connectionManager.getBucket("family").name();
+        return "SELECT `" + connectionManager.getBucket("family").name() + "`.* FROM `" + connectionManager.getBucket("family").name()+"`";
     }
 
     private JsonObject generateFamilyMemberParameters() {
