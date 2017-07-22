@@ -36,6 +36,8 @@ public class Family extends BaseOFSEntity {
             person.setName((String) personMap.get("name"));
             persons.add(person);
         }
+
+        this.familyMembers = persons;
     }
 
     @JsonIgnore

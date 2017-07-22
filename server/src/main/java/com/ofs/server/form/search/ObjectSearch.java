@@ -1,6 +1,7 @@
 package com.ofs.server.form.search;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.BeanDescription;
 import com.fasterxml.jackson.databind.JavaType;
 import com.fasterxml.jackson.databind.JsonNode;
@@ -14,6 +15,7 @@ import com.ofs.server.form.update.UpdatingContext;
 import com.ofs.server.model.OFSEntity;
 
 import java.io.IOException;
+import java.lang.reflect.ParameterizedType;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -24,14 +26,18 @@ public class ObjectSearch <T extends OFSEntity> {
 
     private final ObjectMapper jackson;
     private final JavaType type;
+    private final RequestContext context;
+    private JsonNode request;
 
     private ObjectSearch(RequestContext context, JavaType javaType) {
         this.jackson = context.getMapper();
         this.type = javaType;
+        this.context = context;
     }
 
     public List<T> search(List<T> resultList, JsonNode request) throws IOException {
 
+        this.request = request;
         ObjectReader reader = jackson.readerFor(type);
         T searchValues = reader.readValue(request);
 
@@ -49,14 +55,20 @@ public class ObjectSearch <T extends OFSEntity> {
         return new ObjectSearch<T>(context, javaType);
     }
 
-    private void process(SearchContext searchContext, BeanDescription desc, JsonNode node)
-    {
+    private void process(SearchContext searchContext, BeanDescription desc, JsonNode node) throws IOException {
         List<T> filteredList = null;
         for(BeanPropertyDefinition propDef : filter(desc)) {
             AnnotatedMember accessor = propDef.getAccessor();
             Object fieldValue = accessor.getValue(searchContext.getRequest());
             if(fieldValue != null) {
-                searchContext.filterList(fieldValue.toString(), accessor);
+                if(List.class.isAssignableFrom(fieldValue.getClass())) {
+                    TypeReference<List> mapType = new TypeReference<List>() {};
+                    List searchList = jackson.readValue(node.get(propDef.getName()).toString(), mapType);
+                    searchContext.filterSubList(fieldValue.toString(), accessor, searchList);
+                }
+                else {
+                    searchContext.filterList(fieldValue.toString(), accessor);
+                }
             }
         }
     }
