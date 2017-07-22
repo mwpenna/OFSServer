@@ -113,4 +113,19 @@ public class RepositoryPersonController {
             return new ArrayList<>();
         }
     }
+
+    @PostMapping(value = "search/company", consumes = MediaType.APPLICATION_JSON_VALUE)
+    public List<Person> searchCompany(OFSServerForm<Person> form) throws Exception {
+        log.debug("Fetching All Persons");
+        Optional<List<Person>> personsList = personRepository.getAllPersons();
+
+        if(personsList.isPresent()) {
+            return form.search(personsList.get());
+        }
+        else {
+            return new ArrayList<>();
+        }
+    }
+
+
 }
