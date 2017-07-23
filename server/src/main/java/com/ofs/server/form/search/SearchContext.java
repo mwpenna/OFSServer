@@ -54,7 +54,10 @@ public class SearchContext<T> {
 
                     for(Object key : searchMap.keySet()) {
                         if(map.containsKey(key)) {
-                            if(searchMap.get(key).equals(map.get(key))) {
+                            String mapValue = (String) map.get(key);
+                            String searchMapValue = (String) searchMap.get(key);
+
+                            if(mapValue.toLowerCase().contains(searchMapValue.toLowerCase())) {
                                 meetSearchCriteria = true;
                             }
                         }
