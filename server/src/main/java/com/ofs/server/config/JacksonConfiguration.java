@@ -7,6 +7,7 @@ import com.fasterxml.jackson.databind.MapperFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.deser.std.DateDeserializers;
 import com.ofs.server.json.DateSerializer;
+import com.ofs.server.json.DoubleDeserializer;
 import com.ofs.server.json.ZoneDateTimeDeserializer;
 import com.ofs.server.json.ZoneDateTimeSerializer;
 import org.springframework.beans.factory.annotation.Qualifier;
@@ -27,6 +28,7 @@ public class JacksonConfiguration {
         Jackson2ObjectMapperBuilder b = new Jackson2ObjectMapperBuilder();
         b.serializerByType(Date.class, new DateSerializer());
         b.deserializerByType(Date.class, new DateDeserializers.DateDeserializer());
+        b.deserializerByType(Double.class, new DoubleDeserializer());
         b.serializerByType(ZonedDateTime.class, new ZoneDateTimeSerializer());
         b.deserializerByType(ZonedDateTime.class, new ZoneDateTimeDeserializer());
         b.featuresToEnable(JsonGenerator.Feature.WRITE_BIGDECIMAL_AS_PLAIN);

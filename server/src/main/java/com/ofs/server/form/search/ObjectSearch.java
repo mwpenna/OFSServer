@@ -11,11 +11,9 @@ import com.fasterxml.jackson.databind.introspect.AnnotatedMember;
 import com.fasterxml.jackson.databind.introspect.BeanPropertyDefinition;
 import com.fasterxml.jackson.databind.util.Annotations;
 import com.ofs.server.form.error.RequestContext;
-import com.ofs.server.form.update.UpdatingContext;
 import com.ofs.server.model.OFSEntity;
 
 import java.io.IOException;
-import java.lang.reflect.ParameterizedType;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
@@ -67,7 +65,9 @@ public class ObjectSearch <T extends OFSEntity> {
                     searchContext.filterSubList(fieldValue.toString(), accessor, searchList);
                 }
                 else {
-                    searchContext.filterList(fieldValue.toString(), accessor);
+                    if(this.request.toString().contains(propDef.getName())) {
+                        searchContext.filterList(fieldValue.toString(), accessor);
+                    }
                 }
             }
         }

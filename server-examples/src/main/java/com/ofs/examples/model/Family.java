@@ -1,6 +1,8 @@
 package com.ofs.examples.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.databind.annotation.JsonDeserialize;
+import com.fasterxml.jackson.databind.deser.std.NumberDeserializers;
 import com.ofs.examples.utils.StringUtils;
 import com.ofs.server.model.BaseOFSEntity;
 import lombok.Data;
@@ -16,6 +18,7 @@ public class Family extends BaseOFSEntity {
     private String name;
     private UUID id;
     private List<Person> familyMembers;
+    private double numFamMembers;
 
     public Family() {
 
@@ -36,6 +39,8 @@ public class Family extends BaseOFSEntity {
             person.setName((String) personMap.get("name"));
             persons.add(person);
         }
+
+        this.setNumFamMembers(Double.parseDouble(map.get("numFamMembers").toString()));
 
         this.familyMembers = persons;
     }
